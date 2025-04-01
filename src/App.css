@@ -2,18 +2,7 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
+.App-main {
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
@@ -24,15 +13,124 @@
   color: white;
 }
 
-.App-link {
+.header {
+  background-color: #131519;
+  padding: 20px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.register-form {
+  background-color: #20232a;
+  padding: 20px;
+  border-radius: 5px;
+  width: 400px;
+}
+
+.register-form input {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  width: 80%;
+  display: block;
+  margin: 10px auto;
+  background-color: #282c34;
+  color: white;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.register-form input:focus {
+  background-color: #3a3f47;
+}
+
+ul li {
+  list-style-type: none;
+  padding: 0;
+}
+
+li a {
+  text-decoration: none;
+  color: white;
+}
+
+li a:hover {
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.login-form {
+  background-color: #20232a;
+  padding: 20px;
+  border-radius: 5px;
+  width: 400px;
 }
+.login-form input {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  width: 80%;
+  display: block;
+  margin: 10px auto;
+  background-color: #282c34;
+  color: white;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+.login-form input:focus {
+  background-color: #3a3f47;
+}
+
+.post-form {
+  margin: 20px 0;
+}
+
+.post-form input,
+.post-form textarea {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  margin: 10px 0;
+  padding: 8px;
+}
+
+.posts {
+  margin-top: 20px;
+  width: 100%;
+  display: flex;
+  flex: auto;
+  gap: 30px;
+  max-width: 800px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #20232a;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+}
+
+.post {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 4px;
+}
+
+.post button {
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.post button:hover {
+  background-color: #cc0000;
+}
+
+
+

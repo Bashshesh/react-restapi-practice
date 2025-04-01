@@ -1,0 +1,61 @@
+{
+  "users": [
+    {
+      "id": "08c4",
+      "username": "Ansar",
+      "email": "bashshesh@gmail.com",
+      "password": "abcd"
+    },
+    {
+      "id": "e30d",
+      "username": "abcd",
+      "email": "abcd@gmail.com",
+      "password": "abcd"
+    }
+  ],
+  "profiles": [],
+  "posts": [
+    {
+      "id": "d031",
+      "title": "123",
+      "content": "231",
+      "userId": "e30d",
+      "createdAt": "2025-03-31T10:28:18.638Z"
+    },
+    {
+      "id": "7567",
+      "title": "qweq",
+      "content": "qweeeeeeeeee",
+      "userId": "08c4",
+      "createdAt": "2025-03-31T10:44:10.091Z"
+    },
+    {
+      "id": "ae80",
+      "title": "title 3",
+      "content": "content 3",
+      "userId": "08c4",
+      "createdAt": "2025-03-31T10:44:32.876Z"
+    },
+    {
+      "id": "fa0b",
+      "title": "aaaaaaa",
+      "content": "asfasdgsag",
+      "userId": "08c4",
+      "createdAt": "2025-03-31T10:52:10.997Z"
+    },
+    {
+      "id": "8e1e",
+      "title": "bbbb",
+      "content": "bbbbb",
+      "userId": "08c4",
+      "createdAt": "2025-03-31T10:52:28.628Z"
+    },
+    {
+      "id": "2656",
+      "title": "aaafsf",
+      "content": "afasf",
+      "userId": "08c4",
+      "createdAt": "2025-03-31T11:01:03.113Z"
+    }
+  ]
+}
