@@ -1,22 +1,23 @@
 import axios from 'axios';
 
 export interface Post {
-    id: number;
-    title: string;
-    content: string;
-    userId: number;
-    createdAt: string;
-  }
-  
-  export interface User {
-    id: number;
-    username: string;
-    email: string;
-    password: string;
-  }
+  id: number;
+  title: string;
+  content: string;
+  userId: number;
+  createdAt: string;
+}
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  password?: string; // Пароль не нужен в ответах после логина
+}
 
 const api = axios.create({
   baseURL: 'http://localhost:3001',
+  withCredentials: true, // Важно: позволяет отправлять и принимать cookie
 });
 
 export const registerUser = async (data: { username: string; email: string; password: string }) => {
@@ -24,12 +25,21 @@ export const registerUser = async (data: { username: string; email: string; pass
   return response.data;
 };
 
+// Обновленный логин: POST-запрос для создания сессии
 export const loginUser = async (data: { email: string; password: string }) => {
-  const response = await api.get<User[]>('/users', {
-    params: { email: data.email, password: data.password },
-  });
-  if (response.data.length > 0) return response.data[0];
-  throw new Error('Invalid credentials');
+  const response = await api.post<User>('/login', data);
+  return response.data;
+};
+
+// Получение текущего пользователя по сессии
+export const getCurrentUser = async () => {
+  const response = await api.get<User>('/me');
+  return response.data;
+};
+
+// Выход: завершение сессии
+export const logoutUser = async () => {
+  await api.post('/logout');
 };
 
 export const getUsers = async () => {
@@ -45,7 +55,7 @@ export const getWeather = async (city: string) => {
   return response.data;
 };
 
-export const createPost = async (post: { title: string; content: string; userId: number}) => {
+export const createPost = async (post: { title: string; content: string; userId: number }) => {
   const response = await api.post<Post>('/posts', {
     ...post,
     createdAt: new Date().toISOString(),

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { loginUser } from '../services/api';
+import { loginUser, logoutUser } from '../services/api';
 import '../App.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,11 +15,20 @@ const LoginPage = () => {
 
   const onSubmit = async (data: LoginForm) => {
     try {
-      const user = await loginUser(data);
-      localStorage.setItem('user', JSON.stringify(user)); // Simple auth
+      await loginUser(data); // Сессия создается на сервере
       navigate('/profile');
     } catch (error) {
       alert('Login failed');
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      // Данные в localStorage остаются, но сессия на сервере завершена
+      navigate('/login');
+    } catch (error) {
+      alert('Logout failed');
     }
   };
 
@@ -41,6 +50,7 @@ const LoginPage = () => {
         {errors.password && <p>{errors.password.message}</p>}
         <button type="submit">Login</button>
       </form>
+      <button onClick={handleLogout}>Logout</button> {/* Кнопка выхода */}
     </div>
   );
 };

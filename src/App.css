@@ -22,6 +22,15 @@
   align-items: center;
 }
 
+.footer {
+  background-color: #131519;
+  padding: 20px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .register-form {
   background-color: #20232a;
   padding: 20px;

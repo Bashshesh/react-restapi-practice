@@ -1,0 +1,32 @@
+.
+├── README.md
+├── db.json
+├── package-lock.json
+├── package.json
+├── public
+│   ├── index.html
+│   ├── manifest.json
+│   └── robots.txt
+├── server
+│   ├── index.js
+│   ├── package-lock.json
+│   └── package.json
+├── src
+│   ├── App.css
+│   ├── App.tsx
+│   ├── components
+│   │   ├── Header.tsx
+│   │   └── PostForm.tsx
+│   ├── index.css
+│   ├── index.tsx
+│   ├── pages
+│   │   ├── HomePage.tsx
+│   │   ├── LoginPage.tsx
+│   │   ├── ProfilePage.tsx
+│   │   └── RegisterPage.tsx
+│   └── services
+│       └── api.ts
+├── structure.txt
+└── tsconfig.json
+
+7 directories, 23 files
