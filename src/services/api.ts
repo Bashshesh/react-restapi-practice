@@ -6,6 +6,7 @@ export interface Post {
   content: string;
   userId: number;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface User {
@@ -42,10 +43,20 @@ export const logoutUser = async () => {
   await api.post('/logout');
 };
 
+// Редактирование постов
+export const editPost = async (postId: number, data: { title: string; content: string }) => {
+  const response = await api.put<Post>(`/posts/${postId}`, {
+    ...data,
+    updatedAt: new Date().toISOString(),
+  });
+  return response.data;
+};
+
+// Получение списка пользователей
 export const getUsers = async () => {
-    const response = await api.get<User[]>('/users');
-    return response.data;
-  };
+  const response = await api.get<User[]>('/users');
+  return response.data;
+};
 
 export const getWeather = async (city: string) => {
   const apiKey = 'f2d7906ac131e6db928f58ca7f090b00';

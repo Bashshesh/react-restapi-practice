@@ -15,6 +15,7 @@
 │   ├── App.css
 │   ├── App.tsx
 │   ├── components
+│   │   ├── Footer.tsx
 │   │   ├── Header.tsx
 │   │   └── PostForm.tsx
 │   ├── index.css
@@ -29,4 +30,4 @@
 ├── structure.txt
 └── tsconfig.json
 
-7 directories, 23 files
+7 directories, 24 files

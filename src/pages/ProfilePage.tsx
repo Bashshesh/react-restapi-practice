@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { getWeather, getPosts, deletePost, getCurrentUser, logoutUser, getUsers } from '../services/api';
+import { getWeather, getPosts, deletePost, getCurrentUser, logoutUser, getUsers, editPost } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import '../App.css';
 import PostForm from '../components/PostForm';
+import { title } from 'process';
 
 const ProfilePage = () => {
   const [weather, setWeather] = useState<any>(null);
   const [city, setCity] = useState('London');
   const [posts, setPosts] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
-  const [users, setUsers] = useState<any[]>([]); // Состояние для списка пользователей
+  const [users, setUsers] = useState<any[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPost, setCurrentPost] = useState<{ id: number; title: string; content: string } | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -65,6 +68,38 @@ const ProfilePage = () => {
     }
   };
 
+  const openEditModal = (post: { id: number; title: string; content: string }) => {
+    setCurrentPost(post);
+    setIsModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsModalOpen(false);
+    setCurrentPost(null);
+  };
+
+  const handleSaveEdit = async (updatedPost: { title: string; content: string }) => {
+    if (currentPost) {
+      try {
+        const updatedPostWithTime = { ...updatedPost, updatedAt: new Date().toISOString() };
+        await editPost(currentPost.id, updatedPostWithTime);
+        fetchPosts();
+        closeEditModal();
+      } catch (error) {
+        console.error('Failed to save post', error);
+      }
+    }
+  };
+
+  const handlePostEdit = async (postId: number, updatedPost: { title: string; content: string }) => {
+    try {
+      await editPost(postId, updatedPost);
+      fetchPosts();
+    } catch (error) {
+      console.error('Failed to edit post', error);
+    }
+  };
+
   const handleLogout = async () => {
     try {
       await logoutUser();
@@ -80,16 +115,17 @@ const ProfilePage = () => {
   }
 
   return (
-    <div>
+    <div className="profile-page">
       <h1>Profile</h1>
       <p>Welcome, {user?.username || 'Guest'}!</p>
-      <button onClick={handleLogout}>Logout</button>
+      <button onClick={handleLogout} className='post-button'>Logout</button>
 
       <input
         type="text"
         placeholder="Enter city"
         value={city}
         onChange={(e) => setCity(e.target.value)}
+        className='post-form'
       />
       {weather && (
         <div>
@@ -110,10 +146,13 @@ const ProfilePage = () => {
               <h3>{post.title}</h3>
               <p>{post.content}</p>
               <p>Created: {new Date(post.createdAt).toLocaleString()}</p>
+              <p>Updated: {new Date(post.updatedAt).toLocaleString()}</p>
               <button onClick={() => handleDeletePost(post.id)}>Delete</button>
+              <button onClick={() => openEditModal(post)}>Edit</button>
             </div>
           ))}
       </div>
+
 
       <div className="users">
         <h2>All Users</h2>
@@ -121,6 +160,27 @@ const ProfilePage = () => {
           <p key={u.id}>{u.username} ({u.email})</p>
         ))}
       </div>
+      {isModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <h2>Edit Post</h2>
+            <input
+              type="text"
+              value={currentPost?.title || ''}
+              onChange={(e) => setCurrentPost((prev) => prev ? { ...prev, title: e.target.value } : null)}
+            />
+            <textarea
+              value={currentPost?.content || ''}
+              onChange={(e) => setCurrentPost((prev) => prev ? { ...prev, content: e.target.value } : null)}
+            />
+            <button onClick={() => currentPost && handleSaveEdit({ title: currentPost.title, content: currentPost.content })}>Save</button>
+            <button onClick={closeEditModal}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+
+
     </div>
   );
 };

@@ -41,7 +41,7 @@ const PostForm = ({ onPostCreated }: { onPostCreated: () => void }) => {
         {...register('content', { required: 'Content is required' })}
       />
       {errors.content && <p>{errors.content.message}</p>}
-      <button type="submit">Create Post</button>
+      <button type="submit" className='post-button'>Create Post</button>
     </form>
   );
 };

@@ -9,6 +9,7 @@ interface Post {
   content: string;
   userId: number;
   createdAt: string;
+  updatedAt: string;
 }
 
 interface User {
@@ -64,7 +65,7 @@ const HomePage = () => {
   return (
     <div>
       <h1>Главная страница</h1>
-      <div>
+      <div className='filters'>
         {/* Поле для фильтрации по заголовку */}
         <input
           type="text"

@@ -6,7 +6,7 @@ const Header = () => {
   return (
     <div className="header">
       <h1>Welcome to My App</h1>
-      <p>This is a simple application to demonstrate the use of React Router and TypeScript.</p>
+      <p>This is a simple application</p>
       <nav>
         <ul>
           <li><Link to="/">Home</Link></li>

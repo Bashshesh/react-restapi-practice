@@ -10,7 +10,7 @@ app.use(
   cors({
     origin: 'http://localhost:3000',
     credentials: true,
-    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'DELETE', 'OPTIONS', 'PUT'],
     allowedHeaders: ['Content-Type'],
   })
 );
@@ -76,6 +76,7 @@ app.post('/posts', (req, res) => {
     content,
     userId,
     createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   };
   posts.push(post);
   res.status(201).json(post);
@@ -97,6 +98,24 @@ app.delete('/posts/:postId', (req, res) => {
   }
   posts.splice(postIndex, 1);
   res.status(204).send();
+});
+
+app.options('*', cors());
+
+app.put('/posts/:postId', (req, res) => {
+  const userId = req.session.userId;
+  if (!userId) {
+    return res.status(401).json({ message: 'Not authenticated' });
+  }
+  const postId = parseInt(req.params.postId, 10);
+  const { title, content } = req.body;
+  const post = posts.find((p) => p.id === postId && p.userId === userId);
+  if (!post) {
+    return res.status(404).json({ message: 'Post not found or not authorized' });
+  }
+  post.title = title || post.title;
+  post.content = content || post.content;
+  res.json(post);
 });
 
 app.options('*', cors());
