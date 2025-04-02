@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getWeather, getPosts, deletePost, getCurrentUser, logoutUser, getUsers, editPost } from '../services/api';
+import { getWeather, getPosts, deletePost, getCurrentUser, logoutUser, getUsers, editPost, likePost} from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import '../App.css';
 import PostForm from '../components/PostForm';
@@ -13,6 +13,8 @@ const ProfilePage = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPost, setCurrentPost] = useState<{ id: number; title: string; content: string } | null>(null);
+  const [likes, setLikes] = useState<{ [key: number]: number }>({});
+  const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,11 +42,17 @@ const ProfilePage = () => {
       console.error('Failed to fetch weather', error);
     }
   };
-
   const fetchPosts = async () => {
     try {
       const data = await getPosts();
       setPosts(data);
+
+      const likesData = data.reduce((acc: { [key: number]: number }, post) => {
+        acc[post.id] = post.likes || 0;
+        return acc;
+      }, {});
+
+      setLikes(likesData);
     } catch (error) {
       console.error('Failed to fetch posts', error);
     }
@@ -76,6 +84,21 @@ const ProfilePage = () => {
   const closeEditModal = () => {
     setIsModalOpen(false);
     setCurrentPost(null);
+  };
+
+  const handleLike = async (postId: number) => {
+    if (likedPosts.has(postId)) return; // Если уже лайкали — не даём лайкать снова
+
+    try {
+      await likePost(postId); // API-запрос на сервер
+      setLikes((prevLikes) => ({
+        ...prevLikes,
+        [postId]: (prevLikes[postId] || 0) + 1,
+      }));
+      setLikedPosts((prev) => new Set(prev).add(postId)); // Запоминаем лайкнутый пост
+    } catch (error) {
+      console.error('Failed to like post', error);
+    }
   };
 
   const handleSaveEdit = async (updatedPost: { title: string; content: string }) => {
@@ -147,6 +170,13 @@ const ProfilePage = () => {
               <p>{post.content}</p>
               <p>Created: {new Date(post.createdAt).toLocaleString()}</p>
               <p>Updated: {new Date(post.updatedAt).toLocaleString()}</p>
+              <p>Likes: {likes[post.id] || 0}</p>
+              <button
+                onClick={() => handleLike(post.id)}
+                disabled={likedPosts.has(post.id)}
+              >
+                {likedPosts.has(post.id) ? "Liked ❤️" : "Like 👍"}
+              </button>
               <button onClick={() => handleDeletePost(post.id)}>Delete</button>
               <button onClick={() => openEditModal(post)}>Edit</button>
             </div>

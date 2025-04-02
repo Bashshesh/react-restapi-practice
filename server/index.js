@@ -77,6 +77,8 @@ app.post('/posts', (req, res) => {
     userId,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    likes: 0,          // Add this
+    likedUsers: [],    // Add this
   };
   posts.push(post);
   res.status(201).json(post);
@@ -84,6 +86,33 @@ app.post('/posts', (req, res) => {
 
 app.get('/posts', (req, res) => {
   res.json(posts);
+});
+
+app.post('/api/posts/:postId/like', (req, res) => {
+  const { postId } = req.params;
+  const userId = req.session.userId; // Use session-based auth
+
+  if (!userId) {
+    return res.status(401).json({ message: 'Not authenticated' });
+  }
+
+  const post = posts.find((p) => p.id === parseInt(postId));
+  if (!post) {
+    return res.status(404).json({ message: 'Post not found' });
+  }
+
+  // Initialize likes and likedUsers if not present
+  post.likes = post.likes || 0;
+  post.likedUsers = post.likedUsers || [];
+
+  if (post.likedUsers.includes(userId)) {
+    return res.status(400).json({ message: 'Already liked' });
+  }
+
+  post.likedUsers.push(userId);
+  post.likes += 1;
+
+  res.json({ postId, likes: post.likes });
 });
 
 app.delete('/posts/:postId', (req, res) => {

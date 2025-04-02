@@ -7,6 +7,7 @@ export interface Post {
   userId: number;
   createdAt: string;
   updatedAt: string;
+  likes: number;
 }
 
 export interface User {
@@ -81,6 +82,11 @@ export const getPosts = async () => {
 
 export const deletePost = async (postId: number) => {
   await api.delete(`/posts/${postId}`);
+};
+
+export const likePost = async (postId: number) => {
+  const response = await api.post<Post>(`/api/posts/${postId}/like`); // Add leading slash
+  return response.data;
 };
 
 export default api;
