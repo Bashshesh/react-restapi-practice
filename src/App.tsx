@@ -7,23 +7,26 @@ import LoginPage from './pages/LoginPage';
 import ProfilePage from './pages/ProfilePage';
 import HomePage from './pages/HomePage';
 import Footer from './components/Footer';
+import { LikedPostsProvider } from './services/LikedPostsContext';
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Header />
-        <header className="App-main">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-          </Routes>
-        </header>
-        <Footer/>
-      </div>
-    </Router>
+    <LikedPostsProvider>
+      <Router>
+        <div className="App">
+          <Header />
+          <header className="App-main">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+            </Routes>
+          </header>
+          <Footer />
+        </div>
+      </Router>
+    </LikedPostsProvider>
   );
 }
 

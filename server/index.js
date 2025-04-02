@@ -149,6 +149,11 @@ app.put('/posts/:postId', (req, res) => {
 
 app.options('*', cors());
 
+app.get('/posts', (req, res) => {
+  res.json(posts); // Ensure posts include { id, title, content, userId, createdAt, updatedAt, likes, likedUsers }
+});
+
+
 console.log('Registered routes:');
 app._router.stack.forEach((r) => {
   if (r.route && r.route.path) {

@@ -3,7 +3,6 @@ import { getWeather, getPosts, deletePost, getCurrentUser, logoutUser, getUsers,
 import { useNavigate } from 'react-router-dom';
 import '../App.css';
 import PostForm from '../components/PostForm';
-import { title } from 'process';
 
 const ProfilePage = () => {
   const [weather, setWeather] = useState<any>(null);
