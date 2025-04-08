@@ -115,6 +115,32 @@ app.post('/api/posts/:postId/like', (req, res) => {
   res.json({ postId, likes: post.likes });
 });
 
+app.post('/api/posts/:postId/unlike', (req, res) => { 
+  const { postId } = req.params;
+  const userId = req.session.userId;
+
+  if (!userId) {
+    return res.status(401).json({ message: 'Not authenticated' });
+  }
+
+  const post = posts.find((p) => p.id === parseInt(postId));
+  if (!post) {
+    return res.status(404).json({ message: 'Post not found' });
+  }
+
+  post.likes = post.likes || 0;
+  post.likedUsers = post.likedUsers || [];
+
+  if (!post.likedUsers.includes(userId)) {
+    return res.status(400).json({ message: 'Not liked yet' });
+  }
+
+  post.likedUsers = post.likedUsers.filter((id) => id !== userId);
+  post.likes -= 1;
+
+  res.json(post); // Return the full post object
+});
+
 app.delete('/posts/:postId', (req, res) => {
   const userId = req.session.userId;
   if (!userId) {

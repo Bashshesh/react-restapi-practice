@@ -8,18 +8,19 @@ export interface Post {
   createdAt: string;
   updatedAt: string;
   likes: number;
+  likedUsers: number[];
 }
 
 export interface User {
   id: number;
   username: string;
   email: string;
-  password?: string; // Пароль не нужен в ответах после логина
+  password?: string;
 }
 
 const api = axios.create({
   baseURL: 'http://localhost:3001',
-  withCredentials: true, // Важно: позволяет отправлять и принимать cookie
+  withCredentials: true,
 });
 
 export const registerUser = async (data: { username: string; email: string; password: string }) => {
@@ -27,24 +28,20 @@ export const registerUser = async (data: { username: string; email: string; pass
   return response.data;
 };
 
-// Обновленный логин: POST-запрос для создания сессии
 export const loginUser = async (data: { email: string; password: string }) => {
   const response = await api.post<User>('/login', data);
   return response.data;
 };
 
-// Получение текущего пользователя по сессии
 export const getCurrentUser = async () => {
   const response = await api.get<User>('/me');
   return response.data;
 };
 
-// Выход: завершение сессии
 export const logoutUser = async () => {
   await api.post('/logout');
 };
 
-// Редактирование постов
 export const editPost = async (postId: number, data: { title: string; content: string }) => {
   const response = await api.put<Post>(`/posts/${postId}`, {
     ...data,
@@ -53,7 +50,6 @@ export const editPost = async (postId: number, data: { title: string; content: s
   return response.data;
 };
 
-// Получение списка пользователей
 export const getUsers = async () => {
   const response = await api.get<User[]>('/users');
   return response.data;
@@ -84,8 +80,14 @@ export const deletePost = async (postId: number) => {
   await api.delete(`/posts/${postId}`);
 };
 
+// Updated to use /api/ prefix
 export const likePost = async (postId: number) => {
-  const response = await api.post<Post>(`/api/posts/${postId}/like`); // Add leading slash
+  const response = await api.post<Post>(`/api/posts/${postId}/like`);
+  return response.data;
+};
+
+export const unlikePost = async (postId: number) => {
+  const response = await api.post<Post>(`/api/posts/${postId}/unlike`);
   return response.data;
 };
 

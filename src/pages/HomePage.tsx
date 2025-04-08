@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { getPosts, getUsers } from "../services/api";
-import { useLikedPosts } from "/Users/bashshesh/react-restapi-practice/my-app/src/services/LikedPostsContext"; // Import the hook
+import { getPosts, getUsers, getCurrentUser } from "../services/api";
+import { useLikedPosts } from "../services/LikedPostsContext";
 import "../App.css";
 
 interface Post {
@@ -11,6 +11,7 @@ interface Post {
   createdAt: string;
   updatedAt: string;
   likes: number;
+  likedUsers: number[];
 }
 
 interface User {
@@ -21,20 +22,26 @@ interface User {
 const HomePage = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [currentUser, setCurrentUser] = useState<User | null>(null); // Add currentUser
   const [titleFilter, setTitleFilter] = useState("");
   const [authorFilter, setAuthorFilter] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  
-  // Get likedPosts and handleLike function from the context
-  const { likedPosts, handleLike } = useLikedPosts();
+  const { likedPosts, handleLike, setLikedPosts } = useLikedPosts(); // Add setLikedPosts
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const postsData = await getPosts();
-        const usersData = await getUsers();
         setPosts(postsData);
+        const usersData = await getUsers();
         setUsers(usersData);
+        // Fetch current user if logged in
+        try {
+          const user = await getCurrentUser();
+          setCurrentUser(user);
+        } catch (error) {
+          console.log("No current user");
+        }
       } catch (error) {
         console.error("Ошибка при загрузке данных:", error);
       }
@@ -42,9 +49,36 @@ const HomePage = () => {
     fetchData();
   }, []);
 
+  // Sync likedPosts when posts and currentUser are available
+  useEffect(() => {
+    if (currentUser && posts.length > 0) {
+      const likedPostIds = posts
+        .filter(post => post.likedUsers?.includes(currentUser.id))
+        .map(post => post.id);
+      setLikedPosts(new Set(likedPostIds));
+    }
+  }, [posts, currentUser, setLikedPosts]);
+
   const getUsername = (userId: number) => {
     const user = users.find((u) => u.id === userId);
     return user ? user.username : "Неизвестный";
+  };
+
+  const handleLikeClick = async (postId: number) => {
+    if (!currentUser) {
+      alert("Please log in to like posts");
+      return;
+    }
+    try {
+      const updatedPost = await handleLike(postId);
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.id === updatedPost.id ? { ...post, likes: updatedPost.likes } : post
+        )
+      );
+    } catch (error) {
+      console.error("Failed to update like in UI", error);
+    }
   };
 
   const filteredAndSortedPosts = useMemo(() => {
@@ -93,18 +127,12 @@ const HomePage = () => {
           <div key={post.id} className="post">
             <h3>{post.title}</h3>
             <p>{post.content}</p>
-            <p>
-              <strong>Автор:</strong> {getUsername(post.userId)}
-            </p>
-            <p>
-              <strong>Дата:</strong> {new Date(post.createdAt).toLocaleString()}
-            </p>
-            <button onClick={() => handleLike(post.id)}>
-              {likedPosts.has(post.id) ? "Liked ❤️" : "Like 👍"}
+            <p><strong>Автор:</strong> {getUsername(post.userId)}</p>
+            <p><strong>Дата:</strong> {new Date(post.createdAt).toLocaleString()}</p>
+            <button onClick={() => handleLikeClick(post.id)}>
+              {currentUser && likedPosts.has(post.id) ? "Unlike ❤️" : "Like 👍"}
             </button>
-            <p>
-              <strong>Likes:</strong> {post.likes || 0}
-            </p>
+            <p><strong>Likes:</strong> {post.likes || 0}</p>
           </div>
         ))}
       </div>
